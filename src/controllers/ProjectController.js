@@ -10,6 +10,9 @@ module.exports = {
 
     async findById(request, response){
         const project = await Project.findById(request.params.id);
+        if (project === null){
+            return response.status(400).json({message: 'Item not found'});
+        }
         return response.json(project);
     },
 
@@ -19,12 +22,19 @@ module.exports = {
     },
 
     async update(request, response){
-        const project = await Project.findByIdAndUpdate(request.params.id, request.body, {new : true});
+        const {body, params:{id}} = request;
+        const project = await Project.findByIdAndUpdate(id, body, {new : true});
+        if (project === null){
+            return response.status(400).json({message: 'Item not found'});
+        }
         return response.json(project);
     },
 
     async delete(request, response){
-        await Project.findByIdAndRemove(request.params.id);
+        const project = await Project.findByIdAndRemove(request.params.id);
+        if (project === null){
+            return response.status(400).json({message: 'Item not found'});
+        }
         return response.json({resposta: "Item deletado"});
     }
 };
